@@ -8,6 +8,7 @@ import { urls } from "../utils/urlUtils";
 import { firebaseDatabase } from "../utils/firebaseUtils";
 import { BodyPartName } from "./BoodyPartName";
 import { getMonthName } from "../utils/dateUtils";
+import { CadValDisplay } from "./CadValDisplay";
 
 class ShotsList extends Component {
   constructor(props) {
@@ -118,9 +119,10 @@ class ShotsList extends Component {
                     </td>
                     <td className="text-center">{value.batchNumber}</td>
                     <td className="text-center">
-                      {getMonthName(value.cadVal.split("/")[0]) +
-                        "/" +
-                        value.cadVal.split("/")[1]}
+                      <CadValDisplay
+                        month={value.cadVal.split("/")[0]}
+                        year={value.cadVal.split("/")[1]}
+                      />
                     </td>
                     <td className="text-right">
                       <Button

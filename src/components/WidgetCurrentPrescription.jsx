@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { firebaseDatabase } from "../utils/firebaseUtils";
 import { getMonthName, getDateAsString } from "../utils/dateUtils";
 import { Alert } from "reactstrap";
+import { CadValDisplay } from "./CadValDisplay";
 
 class WidgetCurrentPrescription extends Component {
   state = {
@@ -64,9 +65,11 @@ class WidgetCurrentPrescription extends Component {
                 <li className="list-group-item disabled small">
                   Cad./Val.:{" "}
                   <strong>
-                    {getMonthName(this.state.data.expirationMonth) +
-                      "/" +
-                      this.state.data.expirationYear}
+                    <CadValDisplay
+                      className="text-info"
+                      month={this.state.data.expirationMonth}
+                      year={this.state.data.expirationYear}
+                    />
                   </strong>
                 </li>
               </ul>
