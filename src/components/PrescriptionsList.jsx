@@ -1,7 +1,10 @@
 import React, { Component } from "react";
-import { ButtonGroup, Button, Alert } from "reactstrap";
+import { ButtonGroup, Button, Alert, Table } from "reactstrap";
 import ObjectUtils from "../utils/ObjectUtils";
 import FirebaseService from "../utils/FirebaseService";
+import { CadValDisplay } from "./CadValDisplay";
+import { getDateAsString } from "../utils/dateUtils";
+import { firebaseDatabase } from "../utils/firebaseUtils";
 
 class PrescriptionsList extends Component {
   constructor(props) {
@@ -15,19 +18,49 @@ class PrescriptionsList extends Component {
     };
   }
 
+  fetchData = (filter, callBackFn) => {
+    const nodePath = "prescriptions";
+
+    if (filter === "ALL") {
+      FirebaseService.getDataList(nodePath, dataReceived =>
+        callBackFn(dataReceived)
+      );
+    } else {
+      firebaseDatabase
+        .ref(nodePath)
+        .orderByChild("shotsAvailable")
+        .endAt(filter === "AVAILABLE" ? 3 : 0)
+        .on("value", dataSnapshot => {
+          let items = FirebaseService.buildDataArray(dataSnapshot);
+          callBackFn(items);
+        });
+    }
+  };
+
   componentDidMount = () => {
     this.setState({ dataLoading: true, dataLoaded: false });
-    FirebaseService.getDataList("prescriptions", dataReceived => {
+    this.fetchData(this.state.filter, dataReceived => {
+      this.setState(
+        {
+          data: dataReceived,
+          dataLoading: false,
+          dataLoaded: true
+        },
+        () => console.log(this.state)
+      );
+    });
+  };
+
+  onRadioBtnClick = newFilter => {
+    this.fetchData(newFilter, dataReceived => {
       this.setState({
+        filter: newFilter,
         data: dataReceived,
         dataLoading: false,
         dataLoaded: true
       });
     });
   };
-  onRadioBtnClick(filter) {
-    this.setState({ filter });
-  }
 
   render() {
     return (
@@ -71,14 +104,50 @@ class PrescriptionsList extends Component {
         )}
         {this.state.dataLoaded &&
           ObjectUtils.isEmpty(this.state.data) && (
-            <Alert color="warning">
-              Nenhuma prescrição encontrada. Por favor, insira uma nova
-              prescrição.
-            </Alert>
+            <React.Fragment>
+              <hr />
+              <Alert color="warning">
+                Nenhuma prescrição encontrada. Por favor, insira uma nova
+                prescrição.
+              </Alert>
+            </React.Fragment>
           )}
         {this.state.dataLoaded &&
           !ObjectUtils.isEmpty(this.state.data) && (
-            <Alert color="secondary">Adicionar a tabela aqui!</Alert>
+            <Table hover>
+              <thead>
+                <tr>
+                  <th>Data Recolha</th>
+                  <th>Lote #</th>
+                  <th>Validade</th>
+                  <th>Disponíveis</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.data.map((value, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>{getDateAsString(value.dateCollected)}</td>
+                      <td>{value.batchNumber}</td>
+                      <td>
+                        <CadValDisplay
+                          month={value.expirationMonth}
+                          year={value.expirationYear}
+                        />
+                      </td>
+                      <td>{value.shotsAvailable}</td>
+                      <td>{value.numberOfShots}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colSpan="6" />
+                </tr>
+              </tfoot>
+            </Table>
           )}
       </React.Fragment>
     );

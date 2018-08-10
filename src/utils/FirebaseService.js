@@ -83,4 +83,19 @@ export default class FirebaseService {
   static updateData = (node, key, objToSubmit) => {
     firebaseDatabase.ref("/" + node + "/" + key).update(objToSubmit);
   };
+
+  /**
+   * Converts a map into an array. The map keys are added to the objects under the key 'key'.
+   * @param {object} dataSnapshot the data retrieved from Firebase.
+   * @returns {Array} the data as an array.
+   */
+  static buildDataArray = dataSnapshot => {
+    let items = [];
+    dataSnapshot.forEach(childSnapshot => {
+      let item = childSnapshot.val();
+      item["key"] = childSnapshot.key;
+      items.push(item);
+    });
+    return items;
+  };
 }

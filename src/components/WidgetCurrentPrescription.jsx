@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { firebaseDatabase } from "../utils/firebaseUtils";
-import { getMonthName, getDateAsString } from "../utils/dateUtils";
+import { getDateAsString } from "../utils/dateUtils";
 import { Alert } from "reactstrap";
 import { CadValDisplay } from "./CadValDisplay";
+import { Button } from "reactstrap";
+import { Link } from "react-router-dom";
+import { urls } from "../utils/urlUtils";
 
 class WidgetCurrentPrescription extends Component {
   state = {
@@ -92,9 +95,12 @@ class WidgetCurrentPrescription extends Component {
               Inserir Nova Prescrição
             </button>
             {!this.isDataEmpty() && (
-              <button type="button" className="btn btn-secondary">
-                Ver Histórico...
-              </button>
+              <Button
+                color="secondary"
+                tag={props => <Link to={urls.prescriptions.path} {...props} />}
+              >
+                {urls.prescriptions.name}
+              </Button>
             )}
           </div>
         </div>

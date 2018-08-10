@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { urls } from "../utils/urlUtils";
 import { firebaseDatabase } from "../utils/firebaseUtils";
 import { BodyPartName } from "./BoodyPartName";
-import { getMonthName } from "../utils/dateUtils";
+import logo from "../logo.svg";
 import { CadValDisplay } from "./CadValDisplay";
 
 class ShotsList extends Component {
