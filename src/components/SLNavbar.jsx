@@ -13,7 +13,6 @@ import {
   DropdownItem
 } from "reactstrap";
 import { navBarUrls as urls } from "../utils/urlUtils";
-import logo from "../logo.svg";
 
 export default class SLNavbar extends Component {
   constructor(props) {
@@ -34,7 +33,6 @@ export default class SLNavbar extends Component {
       <div>
         <Navbar color="light" light expand="md">
           <NavbarBrand href="/">
-            <img src={logo} className="App-logo" alt="react logo" />
             Shot Logger <small>React training</small>
           </NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
