@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { firebaseDatabase } from "../utils/firebaseUtils";
-import { getMonthName } from "../utils/dateUtils";
+import { getMonthName, getDateAsString } from "../utils/dateUtils";
+import { Alert } from "reactstrap";
 
 class WidgetCurrentPrescription extends Component {
   state = {
-    data: {}
+    data: {},
+    loading: true,
+    loaded: false
   };
 
   isDataEmpty = () => {
@@ -15,6 +18,7 @@ class WidgetCurrentPrescription extends Component {
   };
 
   componentDidMount = () => {
+    this.setState({ loading: true });
     let query = firebaseDatabase
       .ref("prescriptions")
       .orderByChild("dateCollected")
@@ -22,7 +26,7 @@ class WidgetCurrentPrescription extends Component {
     query.on("value", snap => {
       let dataReceived = snap.val();
       for (const key in dataReceived) {
-        this.setState({ data: dataReceived[key] });
+        this.setState({ data: dataReceived[key], loading: false });
         break;
       }
     });
@@ -33,41 +37,51 @@ class WidgetCurrentPrescription extends Component {
       <div className="card bg-light">
         <div className="card-body">
           <h5 className="card-title">Prescrição Actual</h5>
-          {!this.isDataEmpty() && (
-            <ul className="list-group bg-light">
-              <li className="list-group-item">
-                Injeções: <strong> {this.state.data.totalShots}</strong>
-                <span className="badge badge-pill badge-success float-right">
-                  {this.state.data.shotsAvailable + " Disponívies"}
-                </span>
-              </li>
-              <li className="list-group-item disabled small">
-                Data:{" "}
-                <strong>{getMonthName(this.state.data.dateCollected)}</strong>
-              </li>
-              <li className="list-group-item disabled small">
-                Lote: <strong>{this.state.data.batchNumber}</strong>
-              </li>
-              <li className="list-group-item disabled small">
-                Cad./Val.:{" "}
-                <strong>
-                  {this.state.data.expirationMonth +
-                    "/" +
-                    this.state.data.expirationYear}
-                </strong>
-              </li>
-            </ul>
+          {this.state.loading && (
+            <Alert color="secondary">
+              A obter dados. Por favor, aguarde...
+            </Alert>
           )}
-          {this.isDataEmpty() && (
-            <React.Fragment>
-              <h6 className="card-subtitle my-2 text-muted">
-                Nenhuma prescrição encontrada.
-              </h6>
-              <p className="card-text">
-                Por favor, insira uma nova prescrição usando o botão abaixo.
-              </p>
-            </React.Fragment>
-          )}
+
+          {!this.state.loading &&
+            !this.isDataEmpty() && (
+              <ul className="list-group bg-light">
+                <li className="list-group-item">
+                  Injeções: <strong> {this.state.data.numberOfShots}</strong>
+                  <span className="badge badge-pill badge-success float-right">
+                    {this.state.data.shotsAvailable + " Disponívies"}
+                  </span>
+                </li>
+                <li className="list-group-item disabled small">
+                  Data:{" "}
+                  <strong>
+                    {getDateAsString(this.state.data.dateCollected)}
+                  </strong>
+                </li>
+                <li className="list-group-item disabled small">
+                  Lote: <strong>{this.state.data.batchNumber}</strong>
+                </li>
+                <li className="list-group-item disabled small">
+                  Cad./Val.:{" "}
+                  <strong>
+                    {getMonthName(this.state.data.expirationMonth) +
+                      "/" +
+                      this.state.data.expirationYear}
+                  </strong>
+                </li>
+              </ul>
+            )}
+          {!this.state.loading &&
+            this.isDataEmpty() && (
+              <React.Fragment>
+                <h6 className="card-subtitle my-2 text-muted">
+                  Nenhuma prescrição encontrada.
+                </h6>
+                <p className="card-text">
+                  Por favor, insira uma nova prescrição usando o botão abaixo.
+                </p>
+              </React.Fragment>
+            )}
         </div>
         <div className="card-body text-center">
           <div className="btn-group" role="group">

@@ -1,10 +1,27 @@
 import React, { Component } from "react";
 import ObjectUtils from "../utils/ObjectUtils";
-import { Button, Form, FormGroup, Label, Input } from "reactstrap";
+import {
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  Nav,
+  NavItem,
+  NavLink,
+  TabContent,
+  TabPane,
+  CardBody,
+  CardTitle,
+  Card,
+  Row,
+  Col
+} from "reactstrap";
 import FirebaseService from "../utils/FirebaseService";
 import { MonthYearInput } from "./MontYearInput";
 import YearSelect from "./YearSelect";
 import { getDateAsString, getTimeAsString } from "../utils/dateUtils";
+import classnames from "classnames";
 
 class InputShots extends Component {
   constructor(props) {
@@ -17,8 +34,17 @@ class InputShots extends Component {
         bodyPart: undefined,
         batchNumber: undefined,
         key: undefined,
-        cadVal: null
+        cadVal: null,
+        activeTab: "1"
       };
+    }
+  }
+
+  toggle(tab) {
+    if (this.state.activeTab !== tab) {
+      this.setState({
+        activeTab: tab
+      });
     }
   }
 
@@ -145,60 +171,108 @@ class InputShots extends Component {
               </FormGroup>
 
               <FormGroup>
-                <Label for="prescrioptions">Prescrições disponíveis:</Label>
-                {this.state.prescriptions &&
-                  !ObjectUtils.isEmpty(this.state.prescriptions) && (
-                    <select
-                      className="form-control"
-                      id="bodyPart"
-                      value={this.state.prescription}
-                      onChange={this.handleChange("prescription")}
-                    >
-                      <option key={-1} value={undefined}>
-                        Escolha...
-                      </option>
-                      {this.state.prescriptions.map((value, index) => {
-                        return (
-                          <option key={index} value={value.key}>
-                            {value.batchNumber}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  )}
-                {this.state.prescriptions &&
-                  ObjectUtils.isEmpty(this.state.prescriptions) && (
-                    <span className="ml-3 text-muted strong">
-                      Sem prescrições disponíveis
-                    </span>
-                  )}
+                <Card>
+                  <CardBody>
+                    <CardTitle>Dados da Injeção</CardTitle>
+                    <TabContent activeTab={this.state.activeTab}>
+                      <TabPane tabId="1" />
+                      <Nav tabs>
+                        <NavItem>
+                          <NavLink
+                            className={classnames({
+                              active: this.state.activeTab === "1"
+                            })}
+                            onClick={() => {
+                              this.toggle("1");
+                            }}
+                          >
+                            Prescrições
+                          </NavLink>
+                        </NavItem>
+                        <NavItem>
+                          <NavLink
+                            className={classnames({
+                              active: this.state.activeTab === "2"
+                            })}
+                            onClick={() => {
+                              this.toggle("2");
+                            }}
+                          >
+                            Manual
+                          </NavLink>
+                        </NavItem>
+                      </Nav>
+                      <TabPane tabId="1" className="bordered p-3">
+                        <Row>
+                          <Col sm="12">
+                            {this.state.prescriptions &&
+                              !ObjectUtils.isEmpty(
+                                this.state.prescriptions
+                              ) && (
+                                <select
+                                  className="form-control"
+                                  id="bodyPart"
+                                  value={this.state.prescription}
+                                  onChange={this.handleChange("prescription")}
+                                >
+                                  <option key={-1} value={undefined}>
+                                    Escolha...
+                                  </option>
+                                  {this.state.prescriptions.map(
+                                    (value, index) => {
+                                      return (
+                                        <option key={index} value={value.key}>
+                                          {value.batchNumber}
+                                        </option>
+                                      );
+                                    }
+                                  )}
+                                </select>
+                              )}
+
+                            {this.state.prescriptions &&
+                              ObjectUtils.isEmpty(this.state.prescriptions) && (
+                                <span className="ml-3 text-muted strong">
+                                  Sem prescrições disponíveis
+                                </span>
+                              )}
+                          </Col>
+                        </Row>
+                      </TabPane>
+                      <TabPane tabId="2" className="bordered p-3">
+                        <FormGroup>
+                          <Label for="batchNumber">Lote:</Label>
+                          <Input
+                            type="text"
+                            id="batchNumber"
+                            name="batchNumber"
+                            value={this.state.batchNumber}
+                            onChange={this.handleChange("batchNumber")}
+                          />
+                        </FormGroup>
+                        <FormGroup>
+                          <Label for="cadVal">Validade:</Label>
+                          <MonthYearInput
+                            className="form-control"
+                            value={this.state.cadVal_month}
+                            handleChangeEvent={this.handleChange(
+                              "cadVal_month"
+                            )}
+                          />
+
+                          <YearSelect
+                            className="form-control"
+                            value={this.state.cadVal_year}
+                            intervalSize={3}
+                            handleChangeEvent={this.handleChange("cadVal_year")}
+                          />
+                        </FormGroup>
+                      </TabPane>
+                    </TabContent>
+                  </CardBody>
+                </Card>
               </FormGroup>
 
-              <FormGroup>
-                <Label for="batchNumber">Lote:</Label>
-                <Input
-                  type="text"
-                  id="batchNumber"
-                  name="batchNumber"
-                  value={this.state.batchNumber}
-                  onChange={this.handleChange("batchNumber")}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="cadVal">Validade:</Label>
-                <MonthYearInput
-                  className="form-control"
-                  value={this.state.cadVal_month}
-                  handleChangeEvent={this.handleChange("cadVal_month")}
-                />
-
-                <YearSelect
-                  className="form-control"
-                  value={this.state.cadVal_year}
-                  intervalSize={3}
-                  handleChangeEvent={this.handleChange("cadVal_year")}
-                />
-              </FormGroup>
               <Button color="primary" onClick={this.handleSaveBtn}>
                 Gravar
               </Button>
