@@ -25,11 +25,20 @@ class PrescriptionsList extends Component {
       FirebaseService.getDataList(nodePath, dataReceived =>
         callBackFn(dataReceived)
       );
-    } else {
+    } else if (filter === "AVAILABLE") {
       firebaseDatabase
         .ref(nodePath)
         .orderByChild("shotsAvailable")
-        .endAt(filter === "AVAILABLE" ? 3 : 0)
+        .startAt(1)
+        .on("value", dataSnapshot => {
+          let items = FirebaseService.buildDataArray(dataSnapshot);
+          callBackFn(items);
+        });
+    } else if (filter === "DEPLETED") {
+      firebaseDatabase
+        .ref(nodePath)
+        .orderByChild("shotsAvailable")
+        .endAt(0)
         .on("value", dataSnapshot => {
           let items = FirebaseService.buildDataArray(dataSnapshot);
           callBackFn(items);
