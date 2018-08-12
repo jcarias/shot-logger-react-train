@@ -22,7 +22,6 @@ import { MonthYearInput } from "./MontYearInput";
 import YearSelect from "./YearSelect";
 import { getDateAsString, getTimeAsString } from "../utils/dateUtils";
 import classnames from "classnames";
-import { LoadingAlert } from "./LoadingAlert";
 import { getMonthName } from "../utils/dateUtils";
 
 class InputShots extends Component {

@@ -8,6 +8,7 @@ import { Route } from "react-router-dom";
 import { urls } from "./utils/urlUtils";
 import InputShots from "./components/InputShots";
 import PrescriptionsList from "./components/PrescriptionsList";
+import InputPrescription from "./components/InputPrescription";
 
 class App extends Component {
   constructor(props) {
@@ -43,6 +44,13 @@ class App extends Component {
             path={urls.prescriptions.path}
             render={props => {
               return <PrescriptionsList {...props} />;
+            }}
+          />
+          <Route
+            exact={true}
+            path={urls.inputPrescriptions.path}
+            render={props => {
+              return <InputPrescription {...props} />;
             }}
           />
         </Container>

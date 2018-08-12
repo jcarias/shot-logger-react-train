@@ -5,6 +5,8 @@ import FirebaseService from "../utils/FirebaseService";
 import { CadValDisplay } from "./CadValDisplay";
 import { getDateAsString } from "../utils/dateUtils";
 import { firebaseDatabase } from "../utils/firebaseUtils";
+import { Link } from "react-router-dom";
+import { urls } from "../utils/urlUtils";
 
 class PrescriptionsList extends Component {
   constructor(props) {
@@ -77,8 +79,13 @@ class PrescriptionsList extends Component {
         <div className="my-3 clearfix">
           <h5 className="float-left">Lista de Prescrições</h5>
           <div className="float-right">
-            <Button color="primary" className="ml-3">
-              Adicionar Prescrição
+            <Button
+              color="primary"
+              tag={props => (
+                <Link to={urls.inputPrescriptions.path} {...props} />
+              )}
+            >
+              {urls.inputPrescriptions.name}
             </Button>
           </div>
         </div>

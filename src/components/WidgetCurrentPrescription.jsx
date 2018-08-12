@@ -91,9 +91,14 @@ class WidgetCurrentPrescription extends Component {
         </div>
         <div className="card-body text-center">
           <div className="btn-group" role="group">
-            <button type="button" className="btn btn-primary">
-              Inserir Nova Prescrição
-            </button>
+            <Button
+              color="primary"
+              tag={props => (
+                <Link to={urls.inputPrescriptions.path} {...props} />
+              )}
+            >
+              {urls.inputPrescriptions.name}
+            </Button>
             {!this.isDataEmpty() && (
               <Button
                 color="secondary"
