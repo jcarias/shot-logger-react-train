@@ -14,6 +14,7 @@ import {
 } from "reactstrap";
 import { MonthYearInput } from "./MontYearInput";
 import YearSelect from "./YearSelect";
+import { FaArrowAltCircleLeft, FaCheck } from "react-icons/fa";
 
 class InputPrescription extends Component {
   constructor(props) {
@@ -57,7 +58,9 @@ class InputPrescription extends Component {
               {this.state.key != null ? "Editar" : "Adicionar Nova"} Prescrição
             </h3>
             <div className="float-right">
-              <Button onClick={this.props.history.goBack}>Voltar</Button>
+              <Button onClick={this.props.history.goBack}>
+                <FaArrowAltCircleLeft /> Voltar
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -130,7 +133,7 @@ class InputPrescription extends Component {
               <Col sm="6" />
             </Row>
             <Button onClick={this.handleFormSubmit} color="primary">
-              Gravar
+              <FaCheck /> Gravar
             </Button>
             <Button onClick={this.props.history.goBack}>Cancelar</Button>
           </Form>
