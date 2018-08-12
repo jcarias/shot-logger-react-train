@@ -1,5 +1,14 @@
 import React, { Component } from "react";
-import { ButtonGroup, Button, Alert, Table } from "reactstrap";
+import {
+  ButtonGroup,
+  Button,
+  Alert,
+  Table,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from "reactstrap";
 import ObjectUtils from "../utils/ObjectUtils";
 import FirebaseService from "../utils/FirebaseService";
 import { CadValDisplay } from "./CadValDisplay";
@@ -7,8 +16,8 @@ import { getDateAsString } from "../utils/dateUtils";
 import { firebaseDatabase } from "../utils/firebaseUtils";
 import { Link } from "react-router-dom";
 import { urls } from "../utils/urlUtils";
-import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import LoadingAlert from "./LoadingAlert";
+import ModalConfirm from "./ModalConfirm";
 
 class PrescriptionsList extends Component {
   constructor(props) {
@@ -18,8 +27,13 @@ class PrescriptionsList extends Component {
       filter: "ALL",
       dataLoading: false,
       dataLoaded: false,
-      data: {}
+      modalDeleteShown: false,
+      data: {},
+      modalData: {}
     };
+    this.confirmDelete = this.confirmDelete.bind(this);
+    this.toggle = this.toggle.bind(this);
+    this.deletePrescription = this.deletePrescription.bind(this);
   }
 
   fetchData = (filter, callBackFn) => {
@@ -74,6 +88,31 @@ class PrescriptionsList extends Component {
       });
     });
   };
+
+  confirmDelete(data) {
+    this.setState({
+      modalDeleteShown: true,
+      modalData: data
+    });
+  }
+
+  toggle() {
+    this.setState({
+      modalDeleteShown: !this.state.modalDeleteShown
+    });
+  }
+
+  deletePrescription() {
+    console.log(this.state.modalData);
+    FirebaseService.remove("prescriptions", this.state.modalData.key).then(
+      () => {
+        this.setState({
+          modalDeleteShown: false,
+          modalData: {}
+        });
+      }
+    );
+  }
 
   render() {
     return (
@@ -157,9 +196,10 @@ class PrescriptionsList extends Component {
                       </td>
                       <td>{value.shotsAvailable}</td>
                       <td>{value.numberOfShots}</td>
-                      <th>
+                      <td align="right">
                         <Button
-                          color="primary"
+                          size="sm"
+                          color="secondary"
                           tag={props => (
                             <Link
                               to={
@@ -170,11 +210,17 @@ class PrescriptionsList extends Component {
                             />
                           )}
                         >
-                          <FaEdit className="AppLogo" />
+                          Editar
                         </Button>
-
-                        <FaTrashAlt />
-                      </th>
+                        <Button
+                          color="danger"
+                          size="sm"
+                          className="ml-3"
+                          onClick={() => this.confirmDelete(value)}
+                        >
+                          Apagar
+                        </Button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -186,6 +232,25 @@ class PrescriptionsList extends Component {
               </tfoot>
             </Table>
           )}
+
+        <ModalConfirm
+          open={this.state.modalDeleteShown}
+          title="Apagar prescrição"
+          destructive={true}
+          handleConfirmSelection={this.deletePrescription}
+          handleCancelSelection={this.toggle}
+        >
+          Apagar prescrição obtida a{" "}
+          {getDateAsString(this.state.modalData.dateCollected)}
+          <br /> Lote: <strong>{this.state.modalData.batchNumber}</strong>
+          <br /> Validade:{" "}
+          <strong>
+            <CadValDisplay
+              month={this.state.modalData.expirationMonth}
+              year={this.state.modalData.expirationYear}
+            />
+          </strong>
+        </ModalConfirm>
       </React.Fragment>
     );
   }
