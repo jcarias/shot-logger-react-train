@@ -14,7 +14,8 @@ import {
 } from "reactstrap";
 import { MonthYearInput } from "./MontYearInput";
 import YearSelect from "./YearSelect";
-import { FaArrowAltCircleLeft, FaCheck } from "react-icons/fa";
+import { FaArrowAltCircleLeft, FaCheck, FaTimes } from "react-icons/fa";
+import FirebaseService from "../utils/FirebaseService";
 
 class InputPrescription extends Component {
   constructor(props) {
@@ -25,7 +26,7 @@ class InputPrescription extends Component {
       expirationMonth: 0,
       expirationYear: new Date().getFullYear() + 3,
       numberOfShots: 4,
-      shotsAvailable: this.numberOfShots
+      shotsAvailable: 4
     };
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -36,6 +37,12 @@ class InputPrescription extends Component {
       this.setState({
         [event.target.name]: event.target.value
       });
+
+      if (event.target.name === "numberOfShots" && !this.state.key) {
+        this.setState({
+          shotsAvailable: event.target.value
+        });
+      }
     }
   }
 
@@ -46,7 +53,21 @@ class InputPrescription extends Component {
   };
 
   handleFormSubmit() {
-    console.log(this.state);
+    let objectToSubmit = {
+      dateCollected: this.state.dateCollected,
+      batchNumber: this.state.batchNumber,
+      expirationMonth: this.state.expirationMonth,
+      expirationYear: this.state.expirationYear,
+      numberOfShots: this.state.numberOfShots,
+      shotsAvailable: this.state.shotsAvailable
+    };
+
+    if (this.state.key) {
+      //TODO: Update record
+    } else {
+      FirebaseService.pushData("prescriptions", objectToSubmit);
+    }
+    this.props.history.goBack();
   }
 
   render() {
@@ -130,12 +151,29 @@ class InputPrescription extends Component {
                   />
                 </FormGroup>
               </Col>
-              <Col sm="6" />
+              <Col sm="6">
+                <FormGroup>
+                  <Label for="shotsAvailable">Injeções Disponíveis:</Label>
+                  <Input
+                    id="shotsAvailable"
+                    name="shotsAvailable"
+                    type="number"
+                    className="form-control"
+                    readOnly={true}
+                    value={this.state.shotsAvailable}
+                    onChange={this.handleChange}
+                  />
+                </FormGroup>
+              </Col>
             </Row>
-            <Button onClick={this.handleFormSubmit} color="primary">
-              <FaCheck /> Gravar
-            </Button>
-            <Button onClick={this.props.history.goBack}>Cancelar</Button>
+            <div className="float-right">
+              <Button onClick={this.handleFormSubmit} color="primary">
+                Gravar <FaCheck />
+              </Button>
+              <Button onClick={this.props.history.goBack} className="ml-3">
+                Cancelar <FaTimes />
+              </Button>
+            </div>
           </Form>
         </CardBody>
       </Card>
