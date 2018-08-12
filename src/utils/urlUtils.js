@@ -7,6 +7,11 @@ export const urls = {
   inputPrescriptions: {
     name: "Adicionar Prescrição",
     path: "/input-prescripton"
+  },
+  editPrescription: {
+    name: "Editar Prescrição",
+    path: "/input-prescripton/:id",
+    pathWithoutParam: "/input-prescripton/"
   }
 };
 

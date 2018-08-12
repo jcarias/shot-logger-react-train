@@ -32,13 +32,24 @@ class InputPrescription extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  componentWillMount = () => {
+    const { id } = this.props.match.params;
+
+    if (!(id === undefined || !id)) {
+      this.setState({ id });
+      FirebaseService.getUniqueDataBy("prescriptions", id, data =>
+        this.setState({ ...data }, () => console.log(this.state))
+      );
+    }
+  };
+
   handleChange(event) {
     if (event) {
       this.setState({
         [event.target.name]: event.target.value
       });
 
-      if (event.target.name === "numberOfShots" && !this.state.key) {
+      if (event.target.name === "numberOfShots" && !this.state.id) {
         this.setState({
           shotsAvailable: event.target.value
         });
@@ -62,8 +73,12 @@ class InputPrescription extends Component {
       shotsAvailable: this.state.shotsAvailable
     };
 
-    if (this.state.key) {
-      //TODO: Update record
+    if (this.state.id) {
+      FirebaseService.updateData(
+        "prescriptions",
+        this.state.id,
+        objectToSubmit
+      );
     } else {
       FirebaseService.pushData("prescriptions", objectToSubmit);
     }
@@ -76,7 +91,7 @@ class InputPrescription extends Component {
         <CardHeader>
           <div className="clearfix">
             <h3 className="float-left">
-              {this.state.key != null ? "Editar" : "Adicionar Nova"} Prescrição
+              {this.state.id != null ? "Editar" : "Adicionar Nova"} Prescrição
             </h3>
             <div className="float-right">
               <Button onClick={this.props.history.goBack}>

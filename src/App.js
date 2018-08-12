@@ -53,6 +53,13 @@ class App extends Component {
               return <InputPrescription {...props} />;
             }}
           />
+          <Route
+            exact={true}
+            path={urls.editPrescription.path}
+            render={props => {
+              return <InputPrescription {...props} />;
+            }}
+          />
         </Container>
       </React.Fragment>
     );

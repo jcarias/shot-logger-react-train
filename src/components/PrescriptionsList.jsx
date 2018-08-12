@@ -7,6 +7,8 @@ import { getDateAsString } from "../utils/dateUtils";
 import { firebaseDatabase } from "../utils/firebaseUtils";
 import { Link } from "react-router-dom";
 import { urls } from "../utils/urlUtils";
+import { FaTrashAlt, FaEdit } from "react-icons/fa";
+import LoadingAlert from "./LoadingAlert";
 
 class PrescriptionsList extends Component {
   constructor(props) {
@@ -116,7 +118,7 @@ class PrescriptionsList extends Component {
           </ButtonGroup>
         </div>
         {this.state.dataLoading && (
-          <Alert color="primary">A carregar dados. Por favor, aguarde...</Alert>
+          <LoadingAlert msg="A carregar dados. Por favor, aguarde..." />
         )}
         {this.state.dataLoaded &&
           ObjectUtils.isEmpty(this.state.data) && (
@@ -138,6 +140,7 @@ class PrescriptionsList extends Component {
                   <th>Validade</th>
                   <th>Disponíveis</th>
                   <th>Total</th>
+                  <th />
                 </tr>
               </thead>
               <tbody>
@@ -154,6 +157,24 @@ class PrescriptionsList extends Component {
                       </td>
                       <td>{value.shotsAvailable}</td>
                       <td>{value.numberOfShots}</td>
+                      <th>
+                        <Button
+                          color="primary"
+                          tag={props => (
+                            <Link
+                              to={
+                                urls.editPrescription.pathWithoutParam +
+                                value.key
+                              }
+                              {...props}
+                            />
+                          )}
+                        >
+                          <FaEdit className="AppLogo" />
+                        </Button>
+
+                        <FaTrashAlt />
+                      </th>
                     </tr>
                   );
                 })}
