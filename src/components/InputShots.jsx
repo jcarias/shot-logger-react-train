@@ -126,14 +126,13 @@ class InputShots extends Component {
       } else {
         FirebaseService.pushData("shots", objectToSubmit);
 
-        console.log(this.state.selPrescription);
-        console.log(objectToSubmit);
-
-        /*FirebaseService.updateData(
+        FirebaseService.updateData(
           "prescriptions",
           this.state.selPrescription.key,
-          objectToSubmit
-        );*/
+          {
+            shotsAvailable: this.state.selPrescription.shotsAvailable - 1
+          }
+        );
       }
 
       this.props.history.goBack();
@@ -373,7 +372,6 @@ class InputShots extends Component {
             </Form>
           </div>
         </div>
-        <LoadingAlert msg="Olá Mundo!" />
       </React.Fragment>
     );
   }
