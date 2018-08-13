@@ -7,17 +7,24 @@ import { Link } from "react-router-dom";
 import { urls } from "../utils/urlUtils";
 import { firebaseDatabase } from "../utils/firebaseUtils";
 import { BodyPartName } from "./BoodyPartName";
-import logo from "../logo.svg";
 import { CadValDisplay } from "./CadValDisplay";
+import LoadingAlert from "./LoadingAlert";
+import ModalConfirm from "./ModalConfirm";
 
 class ShotsList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       deleteConfirm: {
-        isOpen: false
-      }
+        open: false
+      },
+      loading: true,
+      modalDeleteShown: false
     };
+
+    this.toggle = this.toggle.bind(this);
+    this.deleteShot = this.deleteShot.bind(this);
+    this.confirmDelete = this.confirmDelete.bind(this);
   }
 
   fetchData = callback => {
@@ -40,7 +47,7 @@ class ShotsList extends Component {
   componentDidMount = () => {
     if (ObjectUtils.isEmpty(this.props.bodyParts)) {
       FirebaseService.getDataList("bodyParts", shotsData => {
-        this.setState({ bodyParts: shotsData });
+        this.setState({ bodyParts: shotsData, loading: false });
       });
     }
 
@@ -49,9 +56,27 @@ class ShotsList extends Component {
     });
   };
 
+  confirmDelete(data) {
+    this.setState({
+      modalDeleteShown: true,
+      modalData: data
+    });
+  }
+
   deleteShot = shot => {
-    FirebaseService.remove("shots", shot.key);
+    FirebaseService.remove("shots", this.state.modalData.key).then(
+      this.setState({
+        modalDeleteShown: false,
+        modalData: {}
+      })
+    );
   };
+
+  toggle() {
+    this.setState({
+      modalDeleteShown: !this.state.modalDeleteShown
+    });
+  }
 
   render() {
     return (
@@ -67,11 +92,8 @@ class ShotsList extends Component {
             </Button>
           </div>
         </div>
-
-        {ObjectUtils.isEmpty(this.state) && (
-          <div className="alert alert-primary" role="alert">
-            A obter dados, por favor aguarde...
-          </div>
+        {this.state.loading && (
+          <LoadingAlert msg="A obter dados, por favor aguarde..." />
         )}
 
         {this.state.data &&
@@ -144,7 +166,7 @@ class ShotsList extends Component {
                       </Button>
                       <button
                         className="btn btn-danger btn-sm ml-2"
-                        onClick={() => this.deleteShot(value)}
+                        onClick={() => this.confirmDelete(value)}
                       >
                         Apagar
                       </button>
@@ -154,6 +176,20 @@ class ShotsList extends Component {
               </tbody>
             </table>
           )}
+        <ModalConfirm
+          open={this.state.modalDeleteShown}
+          title="Apagar injeção"
+          destructive={true}
+          handleConfirmSelection={this.deleteShot}
+          handleCancelSelection={this.toggle}
+        >
+          {this.state.modalData && (
+            <span>
+              Apagar a injeção de {getDateAsString(this.state.modalData.date)}{" "}
+              às {getTimeAsString(this.state.modalData.date)}?
+            </span>
+          )}
+        </ModalConfirm>
       </React.Fragment>
     );
   }

@@ -1,14 +1,5 @@
 import React, { Component } from "react";
-import {
-  ButtonGroup,
-  Button,
-  Alert,
-  Table,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
-} from "reactstrap";
+import { ButtonGroup, Button, Alert, Table } from "reactstrap";
 import ObjectUtils from "../utils/ObjectUtils";
 import FirebaseService from "../utils/FirebaseService";
 import { CadValDisplay } from "./CadValDisplay";

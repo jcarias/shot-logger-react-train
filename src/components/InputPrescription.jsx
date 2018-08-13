@@ -174,7 +174,9 @@ class InputPrescription extends Component {
                     name="shotsAvailable"
                     type="number"
                     className="form-control"
-                    readOnly={true}
+                    readOnly={
+                      this.state.id === null || this.state.id === undefined
+                    }
                     value={this.state.shotsAvailable}
                     onChange={this.handleChange}
                   />
