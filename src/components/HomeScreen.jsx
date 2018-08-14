@@ -4,17 +4,40 @@ import WidgetCurrentPrescription from "./WidgetCurrentPrescription";
 import { Row, Col } from "reactstrap";
 import FirebaseService from "../utils/FirebaseService";
 import ObjectUtils from "../utils/ObjectUtils";
+import { firebaseDatabase } from "../utils/firebaseUtils";
 
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+
+    this.fetchBodyParts = this.fetchBodyParts.bind(this);
+    this.fetchLastShot = this.fetchLastShot.bind(this);
   }
 
-  componentDidMount = () => {
+  fetchBodyParts = () => {
     FirebaseService.getDataList("bodyParts", shotsData => {
       this.setState({ bodyParts: shotsData });
     });
+  };
+
+  fetchLastShot = () => {
+    let query = firebaseDatabase
+      .ref("shots")
+      .orderByChild("date")
+      .limitToLast(1);
+    query.on("value", snap => {
+      let dataReceived = snap.val();
+      for (const key in dataReceived) {
+        this.setState({ lastShotData: dataReceived[key] });
+        break;
+      }
+    });
+  };
+
+  componentDidMount = () => {
+    this.fetchBodyParts();
+    this.fetchLastShot();
   };
 
   getBodyPartName = bodyPart => {
@@ -35,13 +58,17 @@ class HomeScreen extends Component {
   render() {
     return (
       <React.Fragment>
-        <Row className="my-4">
+        <Row>
           <Col>
-            <WidgetLastShot bodyParts={this.state.bodyParts} />
+            <WidgetLastShot
+              className="mt-4"
+              bodyParts={this.state.bodyParts}
+              lastShotData={this.state.lastShotData}
+            />
           </Col>
 
           <Col>
-            <WidgetCurrentPrescription />
+            <WidgetCurrentPrescription className="mt-4" />
           </Col>
         </Row>
 

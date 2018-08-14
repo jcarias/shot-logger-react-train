@@ -8,11 +8,14 @@ import { Link } from "react-router-dom";
 import { urls } from "../utils/urlUtils";
 
 class WidgetCurrentPrescription extends Component {
-  state = {
-    data: {},
-    loading: true,
-    loaded: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: {},
+      loading: true,
+      loaded: false
+    };
+  }
 
   isDataEmpty = () => {
     return (
@@ -38,7 +41,7 @@ class WidgetCurrentPrescription extends Component {
 
   render() {
     return (
-      <div className="card bg-light">
+      <div className={this.props.className + " card bg-light"}>
         <div className="card-body">
           <h5 className="card-title">Prescrição Actual</h5>
           {this.state.loading && (
