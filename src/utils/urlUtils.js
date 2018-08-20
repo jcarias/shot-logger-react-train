@@ -12,10 +12,15 @@ export const urls = {
     name: "Editar Prescrição",
     path: "/input-prescripton/:id",
     pathWithoutParam: "/input-prescripton/"
+  },
+  photoBooth: {
+    name: "Teste Câmera",
+    path: "/photo-booth"
   }
 };
 
 export const navBarUrls = {
   shots: urls.shotList,
-  prescriptions: urls.prescriptions
+  prescriptions: urls.prescriptions,
+  photoBooth: urls.photoBooth
 };

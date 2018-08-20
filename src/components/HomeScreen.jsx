@@ -73,7 +73,7 @@ class HomeScreen extends Component {
         </Row>
 
         <Row>
-          <Col>&lt;Tabela com as últimas 5 injeções&gt;</Col>
+          <Col />
         </Row>
       </React.Fragment>
     );

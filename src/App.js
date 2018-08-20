@@ -9,6 +9,7 @@ import { urls } from "./utils/urlUtils";
 import InputShots from "./components/InputShots";
 import PrescriptionsList from "./components/PrescriptionsList";
 import InputPrescription from "./components/InputPrescription";
+import CameraTest from "./components/CameraTest";
 
 class App extends Component {
   constructor(props) {
@@ -58,6 +59,13 @@ class App extends Component {
             path={urls.editPrescription.path}
             render={props => {
               return <InputPrescription {...props} />;
+            }}
+          />
+          <Route
+            exact={true}
+            path={urls.photoBooth.path}
+            render={props => {
+              return <CameraTest {...props} />;
             }}
           />
         </Container>
