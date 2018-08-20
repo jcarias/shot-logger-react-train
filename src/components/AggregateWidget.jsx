@@ -2,10 +2,13 @@ import React from "react";
 
 export const AggregateWidget = props => {
   return (
-    <div>
-      <p>{props.title}</p>
-      <h1>{props.value}</h1>
-      <p className="small">{props.delta}</p>
+    <div className={props.className}>
+      <span>{props.title}</span>
+      <h1 className="clearfix">
+        <span className="float-left">{props.icon}</span>
+        <span className="float-right">{props.value}</span>
+      </h1>
+      <span className="small text-muted">{props.info}</span>
     </div>
   );
 };
